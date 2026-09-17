@@ -13,6 +13,14 @@ def parse_log(log: str) -> Failure:
     error_message = error_match.group(2) if error_match else "Unknown error"
 
     evidence = []
+    status_match = re.search(r"Status:\s*(\d{3})", log, re.IGNORECASE)
+    status_code = status_match.group(1) if status_match else None
+
+    if status_code:
+        evidence.append(f"HTTP status: {status_code}")
+
+    if re.search(r"HttpRetryException|HTTP request failed", log, re.IGNORECASE):
+        evidence.append("HTTP exception detected")
 
     if re.search(r"Connection refused", log, re.IGNORECASE):
         evidence.append("Connection refused")
@@ -23,9 +31,15 @@ def parse_log(log: str) -> Failure:
 
     if re.search(r"SQLException|ConnectException", log):
         evidence.append("Database/network exception detected")
+    if re.search(r"Unresolved reference", log, re.IGNORECASE):
+        evidence.append("Kotlin unresolved reference detected")
 
     if "5432" in log:
         failure_type = "database_connection"
+    elif status_code:
+        failure_type = "http_api_failure"
+    elif re.search(r"Unresolved reference", log, re.IGNORECASE):
+        failure_type = "build_failure"
     else:
         failure_type = "unknown"
 

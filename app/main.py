@@ -26,5 +26,11 @@ def run(log_path: str) -> str:
 
 
 if __name__ == "__main__":
-    report = run("examples/database_error.log")
+    import sys
+
+    if len(sys.argv) != 2:
+        print("Usage: python -m app.main <log_file>")
+        raise SystemExit(1)
+
+    report = run(sys.argv[1])
     print(report)

@@ -1,0 +1,7 @@
+2026-09-17 16:05:41 ERROR Gradle - Build failed
+> Task :app:compileDebugKotlin FAILED
+
+e: MainActivity.kt:42:13 Unresolved reference: userRepository
+e: MainActivity.kt:43:21 Unresolved reference: getUserProfile
+
+FAILURE: Build failed with an exception.

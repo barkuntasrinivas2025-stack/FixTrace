@@ -17,7 +17,36 @@ def analyze_failure(failure: Failure) -> Analysis:
                 "Verify the configured database host and port.",
             ],
         )
-
+    if failure.failure_type == "http_api_failure":
+        return Analysis(
+            classification="http_api_failure",
+            confidence="high",
+            hypothesis=(
+                "The application received an unsuccessful HTTP response "
+                "from the requested API endpoint."
+            ),
+            evidence=failure.evidence,
+            next_verification=[
+                "Verify the API authentication credentials.",
+                "Check whether the request has the required authorization.",
+                "Inspect the API response and server logs for the request.",
+            ],
+        )
+    if failure.failure_type == "build_failure":
+        return Analysis(
+            classification="build_failure",
+            confidence="high",
+            hypothesis=(
+                "The build failed because the Kotlin compiler "
+                "reported an unresolved reference."
+            ),
+            evidence=failure.evidence,
+            next_verification=[
+                "Check whether the referenced symbol is defined.",
+                "Verify the required import or dependency is available.",
+                "Inspect the source location reported by the compiler.",
+            ],
+        )
     return Analysis(
         classification = "unknown",
         confidence = "low",
@@ -27,3 +56,4 @@ def analyze_failure(failure: Failure) -> Analysis:
             "Collect additional application and system logs."
         ],
     )
+

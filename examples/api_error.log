@@ -1,0 +1,5 @@
+2026-09-17 15:10:22 ERROR OrderService - API request failed
+java.net.HttpRetryException: cannot retry due to server authentication, status code: 401
+Method: POST
+Endpoint: /api/orders
+Status: 401
