@@ -1,0 +1,6 @@
+2026-09-17 14:32:10 ERROR PaymentService - Failed to connect to database
+java.sql.SQLException: Connection refused
+    at com.fixtrace.payment.PaymentService.process(PaymentService.java:142)
+Caused by: java.net.ConnectException: Connection refused
+Host: localhost
+Port: 5432
