@@ -1,3 +1,4 @@
+from app.models import DiagnosticResult
 from app.tools import ToolRequest, execute_tool
 
 
@@ -13,6 +14,7 @@ def test_authorized_request_executes_tool():
     assert result.port == 5432
     assert result.reachable is True
     assert result.message == "Port 5432 on localhost is reachable."
+    assert isinstance(result, DiagnosticResult)
 
 
 def test_unauthorized_request_is_blocked():
