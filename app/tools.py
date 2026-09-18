@@ -1,13 +1,5 @@
 import socket
-from dataclasses import dataclass
-from app.models import DiagnosticResult
-
-@dataclass(frozen=True)
-class ToolRequest:
-    principal: str
-    action: str
-    resource: str
-
+from app.models import DiagnosticResult, ToolRequest
 
 def check_port(host: str, port: int) -> DiagnosticResult:
     """
