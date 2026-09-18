@@ -16,3 +16,9 @@ class Analysis:
     hypothesis: str
     evidence: list[str] = field(default_factory=list)
     next_verification: list[str] = field(default_factory=list)
+    
+@dataclass(frozen=True)
+class ToolRequest:
+    principal: str
+    action: str
+    resource: str
