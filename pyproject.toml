@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fixtrace"
+version = "0.1.0"
+description = "Deterministic failure diagnosis with controlled AI explanations"
+requires-python = ">=3.14"
+dependencies = [
+    "strands-agents==1.56.0",
+    "ollama==0.6.2",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==9.1.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
