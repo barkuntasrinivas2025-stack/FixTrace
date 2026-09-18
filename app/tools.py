@@ -10,6 +10,8 @@ def check_port(host: str, port: int) -> DiagnosticResult:
 
     Authorization must happen before this function is called.
     """
+    if not isinstance(port, int) or not 1 <= port <= 65535:
+        raise ValueError("port must be between 1 and 65535")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:

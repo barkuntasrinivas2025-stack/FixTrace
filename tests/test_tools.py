@@ -84,3 +84,17 @@ def test_diagnostic_result():
     assert result.port == 5432
     assert result.reachable is True
     assert result.message == "Port 5432 on 127.0.0.1 is reachable."
+def test_check_port_rejects_invalid_port():
+    try:
+        check_port("localhost", 0)
+        assert False, "check_port should reject invalid port"
+    except ValueError as exc:
+        assert "port" in str(exc).lower()
+
+
+def test_check_port_rejects_port_above_maximum():
+    try:
+        check_port("localhost", 65536)
+        assert False, "check_port should reject invalid port"
+    except ValueError as exc:
+        assert "port" in str(exc).lower()
