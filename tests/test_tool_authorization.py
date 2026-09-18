@@ -55,3 +55,21 @@ def test_unauthorized_request_never_executes_tool(monkeypatch):
     result = execute_tool(request, "localhost", 5432)
 
     assert result == "DENIED: diagnostic action is not authorized."
+
+def test_authorization_failure_never_executes_tool(monkeypatch):
+    request = ToolRequest(
+        principal="fixtrace-agent",
+        action="check_port",
+        resource="diagnostic",
+    )
+
+    monkeypatch.setattr("app.tools.authorize", lambda request: False)
+
+    def should_not_execute(*args, **kwargs):
+        raise AssertionError("check_port must not execute")
+
+    monkeypatch.setattr("app.tools.check_port", should_not_execute)
+
+    result = execute_tool(request, "localhost", 5432)
+
+    assert result == "DENIED: diagnostic action is not authorized."
