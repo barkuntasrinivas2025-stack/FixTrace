@@ -40,3 +40,29 @@ def test_wrong_resource_is_denied():
     )
 
     assert authorize(request) is False
+def test_cedar_missing_is_denied(monkeypatch):
+    monkeypatch.setattr("app.authorization.shutil.which", lambda _: None)
+
+    request = ToolRequest(
+        principal="fixtrace-agent",
+        action="check_port",
+        resource="diagnostic",
+    )
+
+    assert authorize(request) is False
+
+
+def test_cedar_execution_failure_is_denied(monkeypatch):
+    def fail(*args, **kwargs):
+        raise OSError("cedar process failed")
+
+    monkeypatch.setattr("app.authorization.shutil.which", lambda _: "cedar")
+    monkeypatch.setattr("app.authorization.subprocess.run", fail)
+
+    request = ToolRequest(
+        principal="fixtrace-agent",
+        action="check_port",
+        resource="diagnostic",
+    )
+
+    assert authorize(request) is False

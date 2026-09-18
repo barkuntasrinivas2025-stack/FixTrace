@@ -23,26 +23,29 @@ def authorize(request: ToolRequest) -> bool:
     if cedar is None:
         return False
 
-    result = subprocess.run(
-        [
-            cedar,
-            "authorize",
-            "--policies",
-            str(POLICY),
-            "--schema",
-            str(SCHEMA),
-            "--entities",
-            str(ENTITIES),
-            "--principal",
-            f'FixTrace::User::"{request.principal}"',
-            "--action",
-            f'FixTrace::Action::"{request.action}"',
-            "--resource",
-            f'FixTrace::Diagnostic::"{request.resource}"',
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        result = subprocess.run(
+            [
+                cedar,
+                "authorize",
+                "--policies",
+                str(POLICY),
+                "--schema",
+                str(SCHEMA),
+                "--entities",
+                str(ENTITIES),
+                "--principal",
+                f'FixTrace::User::"{request.principal}"',
+                "--action",
+                f'FixTrace::Action::"{request.action}"',
+                "--resource",
+                f'FixTrace::Diagnostic::"{request.resource}"',
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return False
 
     return result.returncode == 0 and result.stdout.strip() == "ALLOW"
