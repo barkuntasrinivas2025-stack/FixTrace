@@ -72,3 +72,29 @@ def test_diagnose_port_converts_unexpected_tool_result_to_permission_error(
         assert False, "diagnose_port should reject non-diagnostic results"
     except PermissionError as exc:
         assert "DENIED: test denial" in str(exc)
+def test_run_preserves_deterministic_diagnosis_when_ai_fails(
+    tmp_path, monkeypatch
+):
+    log_file = tmp_path / "failure.log"
+
+    log_file.write_text(
+        "ERROR OrderService - API request failed\n"
+        "Status: 401\n"
+    )
+
+    def failing_agent(_analysis):
+        raise RuntimeError("AI service unavailable")
+
+    monkeypatch.setattr(
+        "app.main.explain_with_agent",
+        failing_agent,
+    )
+
+    report = run(str(log_file))
+
+    assert "http_api_failure" in report
+    assert "high" in report
+    assert "HTTP status: 401" in report
+    assert "The application received an unsuccessful HTTP response" in report
+    assert "ROOT CAUSE" in report
+    assert "Not proven" in report

@@ -35,7 +35,10 @@ def run(log_path: str) -> str:
     analysis = analyze_failure(failure)
 
     # 4. AI explanation only
-    explanation = explain_with_agent(analysis)
+    try:
+        explanation = explain_with_agent(analysis)
+    except Exception:
+        explanation = "AI explanation unavailable."
 
     # 5. Build authoritative report
     return build_report(analysis, explanation)
