@@ -36,7 +36,11 @@ def check_port(host: str, port: int) -> DiagnosticResult:
         sock.close()
 
 
-def execute_tool(request: ToolRequest, host: str, port: int):
+def execute_tool(
+    request: ToolRequest,
+    host: str,
+    port: int,
+) -> DiagnosticResult | str:
     """
     Authorized tool-execution boundary.
 
