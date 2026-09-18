@@ -1,20 +1,31 @@
+import socket
 from app.models import DiagnosticResult,ToolRequest
 from app.tools import execute_tool
 
 
 def test_authorized_request_executes_tool():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("127.0.0.1", 0))
+    server.listen(1)
+
+    host, port = server.getsockname()
+
     request = ToolRequest(
         principal="fixtrace-agent",
         action="check_port",
         resource="diagnostic",
     )
 
-    result = execute_tool(request, "localhost", 5432)
-    assert result.host == "localhost"
-    assert result.port == 5432
-    assert result.reachable is True
-    assert result.message == "Port 5432 on localhost is reachable."
-    assert isinstance(result, DiagnosticResult)
+    try:
+        result = execute_tool(request, host, port)
+
+        assert result.host == host
+        assert result.port == port
+        assert result.reachable is True
+        assert result.message == f"Port {port} on {host} is reachable."
+        assert isinstance(result, DiagnosticResult)
+    finally:
+        server.close()
 
 
 def test_unauthorized_request_is_blocked():
