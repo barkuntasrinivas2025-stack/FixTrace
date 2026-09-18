@@ -25,7 +25,7 @@ def check_port(host: str, port: int) -> DiagnosticResult:
         reachable=True,
         message=f"Port {port} on {host} is reachable.",
     )
-    except socket.gaierror:
+    except (ConnectionRefusedError, socket.gaierror, socket.timeout):
         return DiagnosticResult(
         host=host,
         port=port,
@@ -34,9 +34,6 @@ def check_port(host: str, port: int) -> DiagnosticResult:
     )
     finally:
         sock.close()
-
-
-
 def execute_tool(request: ToolRequest, host: str, port: int) -> str:
     from app.authorization import authorize
 

@@ -32,10 +32,31 @@ def test_check_port_detects_reachable_port():
         assert result.message == f"Port {port} on {host} is reachable."
     finally:
         server.close()
+
 def test_check_port_handles_invalid_host():
     result = check_port("this-host-should-not-exist.invalid", 5432)
 
     assert result.host == "this-host-should-not-exist.invalid"
+    assert result.port == 5432
+    assert result.reachable is False
+
+def test_check_port_handles_timeout(monkeypatch):
+    class FakeSocket:
+        def connect(self, address):
+            raise socket.timeout
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(
+        socket,
+        "socket",
+        lambda *args, **kwargs: FakeSocket(),
+    )
+
+    result = check_port("127.0.0.1", 5432)
+
+    assert result.host == "127.0.0.1"
     assert result.port == 5432
     assert result.reachable is False
 # def test_check_port_detects_unreachable_port():
