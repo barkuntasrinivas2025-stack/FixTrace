@@ -1,11 +1,16 @@
 from pathlib import Path
 
 from app.agent import explain_with_agent
-# from app.llm import LocalLLMProvider
 from app.parser import parse_log
 from app.report import build_report
-from app.rules import analyze_failure
+from app.rules import analyze_failure, classify_diagnostic
+from app.tools import check_port
+from app.models import Analysis
 
+def diagnose_port(host: str, port: int) -> Analysis:
+    result = check_port(host, port)
+    failure = classify_diagnostic(result)
+    return analyze_failure(failure)
 
 def run(log_path: str) -> str:
     # 1. Read raw log
