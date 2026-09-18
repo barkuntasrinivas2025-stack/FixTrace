@@ -50,3 +50,25 @@ def test_run_builds_complete_report(tmp_path, monkeypatch):
     assert "Mocked AI explanation." in report
     assert "ROOT CAUSE" in report
     assert "Not proven" in report
+
+def test_diagnose_port_propagates_invalid_port():
+    try:
+        diagnose_port("localhost", 0)
+        assert False, "diagnose_port should reject invalid ports"
+    except ValueError as exc:
+        assert "port" in str(exc).lower()
+
+
+def test_diagnose_port_converts_unexpected_tool_result_to_permission_error(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        "app.main.execute_tool",
+        lambda request, host, port: "DENIED: test denial",
+    )
+
+    try:
+        diagnose_port("localhost", 5432)
+        assert False, "diagnose_port should reject non-diagnostic results"
+    except PermissionError as exc:
+        assert "DENIED: test denial" in str(exc)
