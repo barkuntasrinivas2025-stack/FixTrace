@@ -22,3 +22,5 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+[project.scripts]
+fixtrace = "app.cli:main"
