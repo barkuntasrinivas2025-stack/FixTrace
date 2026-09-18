@@ -1,6 +1,6 @@
 import socket
 from dataclasses import dataclass
-
+from app.models import DiagnosticResult
 
 @dataclass(frozen=True)
 class ToolRequest:
@@ -9,7 +9,7 @@ class ToolRequest:
     resource: str
 
 
-def check_port(host: str, port: int) -> str:
+def check_port(host: str, port: int) -> DiagnosticResult:
     """
     Diagnostic operation.
 
@@ -19,11 +19,19 @@ def check_port(host: str, port: int) -> str:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         sock.connect((host, port))
-        return f"Port {port} on {host} is reachable."
-
+        return DiagnosticResult(
+        host=host,
+        port=port,
+        reachable=True,
+        message=f"Port {port} on {host} is reachable.",
+    )
     except ConnectionRefusedError:
-        return f"Port {port} on {host} is unreachable."
-
+        return DiagnosticResult(
+        host=host,
+        port=port,
+        reachable=False,
+        message=f"Port {port} on {host} is unreachable.",
+    )
     finally:
         sock.close()
 
