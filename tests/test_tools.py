@@ -59,21 +59,21 @@ def test_check_port_handles_timeout(monkeypatch):
     assert result.host == "127.0.0.1"
     assert result.port == 5432
     assert result.reachable is False
-# def test_check_port_detects_unreachable_port():
-#     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     server.bind(("127.0.0.1", 0))
+def test_check_port_detects_unreachable_port():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("127.0.0.1", 0))
 
-#     host, port = server.getsockname()
-#     server.close()
+    host, port = server.getsockname()
+    server.close()
 
-#     result = check_port(host, port)
+    result = check_port(host, port)
 
-#     assert result.host == host
-#     assert result.port == port
-#     assert result.reachable is False
-#     assert result.message == f"Port {port} on {host} is unreachable."
+    assert result.host == host
+    assert result.port == port
+    assert result.reachable is False
+    assert result.message == f"Port {port} on {host} is unreachable."
 
-def test_DiagnosticResult():
+def test_diagnostic_result():
     result = DiagnosticResult(
         host="127.0.0.1",
         port=5432,
