@@ -1,3 +1,5 @@
+import socket
+
 from app.tools import ToolRequest, check_port
 
 
@@ -13,7 +15,15 @@ def test_tool_request():
     assert request.resource == "localhost:5432"
 
 
-def test_check_port_is_a_diagnostic_operation():
-    result = check_port("localhost", 5432)
+def test_check_port_detects_reachable_port():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("127.0.0.1", 0))
+    server.listen(1)
 
-    assert result == "Port check requested for localhost:5432"
+    host, port = server.getsockname()
+
+    try:
+        result = check_port(host, port)
+        assert result == f"Port {port} on {host} is reachable."
+    finally:
+        server.close()

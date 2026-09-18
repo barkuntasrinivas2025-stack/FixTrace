@@ -10,7 +10,7 @@ def test_authorized_request_executes_tool():
 
     result = execute_tool(request, "localhost", 5432)
 
-    assert result == "Port check requested for localhost:5432"
+    assert result == "Port 5432 on localhost is reachable."
 
 
 def test_unauthorized_request_is_blocked():
@@ -33,5 +33,5 @@ def test_unsupported_action_is_blocked():
     )
 
     result = execute_tool(request, "localhost", 5432)
-
+    
     assert result == "DENIED: unsupported diagnostic action."
