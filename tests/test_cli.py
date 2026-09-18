@@ -63,3 +63,18 @@ def test_diagnose_port_rejects_port_above_maximum(monkeypatch, capsys):
 
     assert "port must be between 1 and 65535" in captured.err
     assert "Traceback" not in captured.err
+def test_analyze_rejects_missing_log_file(monkeypatch, capsys):
+    monkeypatch.setattr(
+        "sys.argv",
+        ["fixtrace", "analyze", "nonexistent.log"],
+    )
+
+    try:
+        main()
+        assert False, "main should reject a missing log file"
+    except SystemExit as exc:
+        assert exc.code == 2
+
+    captured = capsys.readouterr()
+
+    assert "ERROR: log file not found: nonexistent.log" in captured.err

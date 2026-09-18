@@ -30,9 +30,12 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "analyze":
-        print(run(args.log_file))
+        try:
+            print(run(args.log_file))
+        except FileNotFoundError:
+            print(f"ERROR: log file not found: {args.log_file}", file=sys.stderr)
+            raise SystemExit(2)
         return
-
     if args.command == "diagnose-port":
         try:
             analysis = diagnose_port(args.host, args.port)
