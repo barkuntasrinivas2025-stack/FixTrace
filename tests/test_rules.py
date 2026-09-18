@@ -65,3 +65,19 @@ def test_classify_unreachable_port():
     assert failure.evidence == [
         "Port 5432 on localhost is unreachable."
     ]
+def test_classify_reachable_port():
+    result = DiagnosticResult(
+        host="localhost",
+        port=5432,
+        reachable=True,
+        message="Port 5432 on localhost is reachable.",
+    )
+
+    failure = classify_diagnostic(result)
+
+    assert failure.failure_type == "database_connection"
+    assert failure.component == "localhost:5432"
+    assert failure.error_message == "Port 5432 on localhost is reachable."
+    assert failure.evidence == [
+        "Port 5432 on localhost is reachable."
+    ]

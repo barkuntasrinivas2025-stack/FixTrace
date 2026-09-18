@@ -10,7 +10,7 @@ def classify_diagnostic(result: DiagnosticResult) -> Failure:
         )
 
     return Failure(
-        failure_type="unknown",
+        failure_type="database_connection",
         component=f"{result.host}:{result.port}",
         error_message=result.message,
         evidence=[result.message],
