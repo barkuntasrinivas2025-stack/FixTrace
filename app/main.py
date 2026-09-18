@@ -35,7 +35,6 @@ def run(log_path: str) -> str:
     analysis = analyze_failure(failure)
 
     # 4. AI explanation only
-    # llm = LocalLLMProvider()
     explanation = explain_with_agent(analysis)
 
     # 5. Build authoritative report
