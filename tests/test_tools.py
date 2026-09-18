@@ -98,3 +98,25 @@ def test_check_port_rejects_port_above_maximum():
         assert False, "check_port should reject invalid port"
     except ValueError as exc:
         assert "port" in str(exc).lower()
+def test_check_port_closes_socket_after_connection_failure(monkeypatch):
+    class FakeSocket:
+        closed = False
+
+        def connect(self, address):
+            raise socket.timeout
+
+        def close(self):
+            self.closed = True
+
+    fake_socket = FakeSocket()
+
+    monkeypatch.setattr(
+        socket,
+        "socket",
+        lambda *args, **kwargs: fake_socket,
+    )
+
+    result = check_port("127.0.0.1", 5432)
+
+    assert result.reachable is False
+    assert fake_socket.closed is True
