@@ -1,5 +1,5 @@
 import argparse
-
+import sys
 from app.main import diagnose_port, run
 
 
@@ -34,7 +34,11 @@ def main() -> None:
         return
 
     if args.command == "diagnose-port":
-        analysis = diagnose_port(args.host, args.port)
+        try:
+            analysis = diagnose_port(args.host, args.port)
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            raise SystemExit(2)
 
         print(f"FAILURE: {analysis.classification}")
         print(f"CONFIDENCE: {analysis.confidence}")
