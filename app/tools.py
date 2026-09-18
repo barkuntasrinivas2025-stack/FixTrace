@@ -25,7 +25,7 @@ def check_port(host: str, port: int) -> DiagnosticResult:
         reachable=True,
         message=f"Port {port} on {host} is reachable.",
     )
-    except ConnectionRefusedError:
+    except socket.gaierror:
         return DiagnosticResult(
         host=host,
         port=port,
