@@ -21,9 +21,9 @@ jobs:
 
       - name: Install Cedar CLI
         run: |
-          curl -L https://github.com/cedar-policy/cedar/releases/latest/download/cedar-linux-x86_64 -o cedar
-          chmod +x cedar
-          sudo mv cedar /usr/local/bin/cedar
+          curl --proto '=https' --tlsv1.2 -LsSf \
+            https://github.com/cedar-policy/cedar/releases/download/cedar-policy-cli-v4.13.0/cedar-policy-cli-installer.sh | sh
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           cedar --version
 
       - name: Install package and test dependencies
