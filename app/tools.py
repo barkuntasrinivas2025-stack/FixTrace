@@ -1,3 +1,4 @@
+import socket
 from dataclasses import dataclass
 
 
@@ -15,7 +16,17 @@ def check_port(host: str, port: int) -> str:
     This function performs the diagnostic operation.
     Authorization is handled before this function is called.
     """
-    return f"Port check requested for {host}:{port}"
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.connect((host, port))
+        return f"Port {port} on {host} is reachable."
+
+    except ConnectionRefusedError:
+        return f"Port {port} on {host} is unreachable."
+
+    finally:
+        sock.close()
+
 
 
 def execute_tool(request: ToolRequest, host: str, port: int) -> str:
