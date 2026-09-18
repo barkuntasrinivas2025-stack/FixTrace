@@ -1,5 +1,20 @@
-from app.models import Analysis,Failure
+from app.models import Analysis, Failure, DiagnosticResult
 
+def classify_diagnostic(result: DiagnosticResult) -> Failure:
+    if not result.reachable:
+        return Failure(
+            failure_type="database_connection",
+            component=f"{result.host}:{result.port}",
+            error_message=result.message,
+            evidence=[result.message],
+        )
+
+    return Failure(
+        failure_type="unknown",
+        component=f"{result.host}:{result.port}",
+        error_message=result.message,
+        evidence=[result.message],
+    )
 
 def analyze_failure(failure: Failure) -> Analysis:
     if failure.failure_type == "database_connection":

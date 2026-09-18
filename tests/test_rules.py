@@ -1,5 +1,5 @@
-from app.models import Failure
-from app.rules import analyze_failure
+from app.models import Failure,DiagnosticResult
+from app.rules import analyze_failure,classify_diagnostic
 
 
 def test_http_api_failure_analysis():
@@ -17,7 +17,7 @@ def test_http_api_failure_analysis():
     assert "unsuccessful HTTP response" in analysis.hypothesis
     assert "HTTP status: 401" in analysis.evidence
     assert len(analysis.next_verification) >= 2
-    
+
 def test_build_failure_analysis():
     failure = Failure(
         failure_type="build_failure",
@@ -33,3 +33,35 @@ def test_build_failure_analysis():
     assert "unresolved reference" in analysis.hypothesis
     assert "Kotlin unresolved reference detected" in analysis.evidence
     assert len(analysis.next_verification) >= 2
+def test_classify_unreachable_port():
+    result = DiagnosticResult(
+        host="localhost",
+        port=5432,
+        reachable=False,
+        message="Port 5432 on localhost is unreachable.",
+    )
+
+    failure = classify_diagnostic(result)
+
+    assert failure.failure_type == "database_connection"
+    assert failure.component == "localhost:5432"
+    assert failure.error_message == "Port 5432 on localhost is unreachable."
+    assert failure.evidence == [
+        "Port 5432 on localhost is unreachable."
+    ]
+def test_classify_unreachable_port():
+    result = DiagnosticResult(
+        host="localhost",
+        port=5432,
+        reachable=False,
+        message="Port 5432 on localhost is unreachable.",
+    )
+
+    failure = classify_diagnostic(result)
+
+    assert failure.failure_type == "database_connection"
+    assert failure.component == "localhost:5432"
+    assert failure.error_message == "Port 5432 on localhost is unreachable."
+    assert failure.evidence == [
+        "Port 5432 on localhost is unreachable."
+    ]

@@ -1,6 +1,5 @@
 import socket
 from app.models import DiagnosticResult
-
 from app.tools import ToolRequest, check_port
 
 
