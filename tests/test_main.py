@@ -10,7 +10,7 @@ def test_diagnose_port_requires_authorization(monkeypatch):
             "check_port must not execute when authorization is denied"
         )
 
-    monkeypatch.setattr("app.authorization.authorize", deny)
+    monkeypatch.setattr("app.tools.authorize", deny)
     monkeypatch.setattr("app.tools.check_port", should_not_execute)
 
     try:

@@ -38,4 +38,20 @@ def test_unsupported_action_is_blocked():
 
     result = execute_tool(request, "localhost", 5432)
 
-    assert result == "DENIED: unsupported diagnostic action."
+    assert result == "DENIED: diagnostic action is not authorized."
+
+def test_unauthorized_request_never_executes_tool(monkeypatch):
+    request = ToolRequest(
+        principal="unknown-agent",
+        action="check_port",
+        resource="diagnostic",
+    )
+
+    def should_not_execute(*args, **kwargs):
+        raise AssertionError("check_port must not execute")
+
+    monkeypatch.setattr("app.tools.check_port", should_not_execute)
+
+    result = execute_tool(request, "localhost", 5432)
+
+    assert result == "DENIED: diagnostic action is not authorized."
