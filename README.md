@@ -10,6 +10,7 @@
 ![Tests](https://img.shields.io/badge/tests-50%20passing-brightgreen)
 ![Auth](https://img.shields.io/badge/authorization-Cedar%20(fail--closed)-blueviolet)
 ![AI](https://img.shields.io/badge/LLM-local%20%26%20non--authoritative-orange)
+![AWS](https://img.shields.io/badge/verified%20on-AWS%20EC2-FF9900?logo=amazonaws&logoColor=white)
 
 </div>
 
@@ -156,11 +157,11 @@ Policy: only `principal = fixtrace-agent`, `action = check_port`, `resource = di
 
 ## 🚀 Quick Start
 
-**Prerequisites:** Python (CI runs 3.14) and the [Cedar CLI](https://github.com/cedar-policy/cedar) for the authorization layer.
+**Prerequisites:** Python (CI and the EC2 deployment run 3.14) and the [Cedar CLI](https://github.com/cedar-policy/cedar) for the authorization layer.
 
 ```bash
 # 1. Clone
-git clone https://github.com/<your-username>/fixtrace.git
+git clone https://github.com/barkuntasrinivas2025-stack/fixtrace.git
 cd fixtrace
 
 # 2. Install
@@ -180,15 +181,105 @@ fixtrace --help
 
 ---
 
+## ☁️ AWS Deployment
+
+FixTrace has been deployed and verified on an AWS EC2 instance.
+
+### Deployment Environment
+
+| | |
+|---|---|
+| **Cloud** | AWS |
+| **Compute** | Amazon EC2 |
+| **Instance** | t3.micro |
+| **OS** | Amazon Linux 2023 |
+| **Architecture** | x86_64 |
+| **Python** | 3.14 |
+| **Cedar CLI** | 4.13.0 |
+| **Region** | us-east-1 |
+
+The application and its authorization layer were executed directly on the EC2 environment.
+
+### AWS Verification
+
+The complete test suite was executed successfully on EC2:
+
+```text
+50 passed in 0.80s
+```
+
+The repository was also verified against the remote `main` branch with a clean working tree:
+
+```text
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
+
+### Deployment Architecture
+
+```text
+Developer / User
+       │
+       ▼
+    AWS EC2
+       │
+       ▼
+   FixTrace
+       │
+   ┌───┴──────────────┐
+   ▼                  ▼
+Deterministic       Cedar
+Diagnosis        Authorization
+   │                  │
+   ▼                  ▼
+AI Explanation    Diagnostic Tool
+   │
+   ▼
+Final Report
+```
+
+AWS provides the execution environment. Diagnosis and authorization decisions remain controlled by the application, not by AWS.
+
+---
+
 ## 🧪 Testing & CI
+
+Run the complete test suite:
 
 ```bash
 python -m pytest -q
 ```
 
-**50 tests** cover parsing, classification, report generation, AI input boundaries, prompt-injection scenarios, AI failure handling, Cedar policy behavior, unauthorized tool execution, TCP diagnostics (invalid ports, socket cleanup) and CLI behavior (including missing files).
+Current result:
 
-GitHub Actions runs the full suite plus a `git diff --check` whitespace check on every push.
+```text
+50 passed
+```
+
+The test suite covers:
+
+- deterministic log parsing and classification
+- database, HTTP and build failures
+- unknown failure handling
+- AI input boundaries
+- prompt-injection scenarios
+- AI failure isolation
+- Cedar policy validation
+- authorized and unauthorized tool requests
+- fail-closed authorization
+- TCP diagnostics
+- invalid port handling
+- socket cleanup
+- CLI behavior
+- missing log files
+
+Also verify:
+
+```bash
+git diff --check
+```
+
+GitHub Actions runs the test suite automatically on pushes and pull requests targeting `main`.
 
 ---
 
@@ -221,11 +312,21 @@ fixtrace/
 │   ├── report.py           # final report rendering
 │   ├── rules.py            # deterministic classification rules
 │   └── tools.py            # check_port diagnostic tool
-├── examples/               # sample logs (database, API, Gradle)
-├── policies/               # Cedar policy, schema, entities, test request
+├── examples/
+│   ├── api_error.log
+│   ├── database_error.log
+│   └── gradle_error.log
+├── policies/
+│   ├── allow-request.json
+│   ├── entities.json
+│   ├── fixtrace.cedar
+│   └── fixtrace.cedarschema
 ├── tests/                  # 10 test modules, 50 tests
-├── .github/workflows/ci.yml
-└── pyproject.toml
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── pyproject.toml
+└── README.md
 ```
 
 ---
@@ -235,12 +336,31 @@ fixtrace/
 - Supports a limited set of deterministic failure patterns (database, HTTP API, Kotlin/Gradle build).
 - The AI layer explains only. It doesn't prove or establish root cause.
 - The diagnostic tool currently covers TCP port reachability only.
+- Verified on a single EC2 instance for demonstration. This is not a production deployment.
 
 ## 🛣️ What's Next
 
 - More failure classifications in `rules.py`
 - More Cedar-gated diagnostic tools beyond `check_port`
 - Structured (JSON) report output for CI pipelines
+
+---
+
+## ✅ Project Status
+
+FixTrace is implemented and deployed for demonstration on AWS EC2.
+
+```text
+Deterministic diagnosis       ✅
+Controlled AI explanation     ✅
+Prompt-injection boundary     ✅
+Cedar authorization           ✅
+Fail-closed authorization     ✅
+Diagnostic tool               ✅
+Automated tests               ✅ 50 passed
+GitHub Actions CI             ✅
+AWS EC2 verification          ✅
+```
 
 ---
 
@@ -256,5 +376,5 @@ Most AI-for-ops demos show how much the model can do. FixTrace shows what the mo
 
 **Srinivas Barkunta (Seenu)**
 
-- GitHub: `<your-github-link>`
-- LinkedIn: `<your-linkedin-link>`
+- GitHub: https://github.com/barkuntasrinivas2025-stack
+- LinkedIn: https://www.linkedin.com/in/srinivas-barkunta-335b85255/
