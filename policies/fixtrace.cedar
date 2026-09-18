@@ -1,5 +1,5 @@
 permit (
-    principal == User::"fixtrace-agent",
-    action == Action::"check_port",
-    resource == Resource::"diagnostic"
+    principal == FixTrace::User::"fixtrace-agent",
+    action == FixTrace::Action::"check_port",
+    resource == FixTrace::Diagnostic::"diagnostic"
 );

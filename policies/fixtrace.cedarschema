@@ -1,0 +1,9 @@
+namespace FixTrace {
+    entity User;
+    entity Diagnostic;
+
+    action "check_port" appliesTo {
+        principal: User,
+        resource: Diagnostic
+    };
+}

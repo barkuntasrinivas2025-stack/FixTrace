@@ -1,0 +1,15 @@
+{
+  "principal": {
+    "type": "FixTrace::User",
+    "id": "fixtrace-agent"
+  },
+  "action": {
+    "type": "FixTrace::Action",
+    "id": "check_port"
+  },
+  "resource": {
+    "type": "FixTrace::Diagnostic",
+    "id": "diagnostic"
+  },
+  "context": {}
+}
