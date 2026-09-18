@@ -37,6 +37,7 @@ Status: 401
     assert failure.component == "OrderService"
     assert "HTTP status: 401" in failure.evidence
     assert "HTTP exception detected" in failure.evidence
+
 def test_gradle_build_failure():
     log = Path("examples/gradle_error.log").read_text()
     failure = parse_log(log)
@@ -44,3 +45,26 @@ def test_gradle_build_failure():
     assert failure.failure_type == "build_failure"
     assert failure.component == "Gradle"
     assert "Kotlin unresolved reference detected" in failure.evidence
+def test_port_number_alone_does_not_classify_as_database_failure():
+    log = """
+2026-09-17 15:10:22 ERROR OrderService - API request failed
+Status: 401
+Configured database port: 5432
+"""
+
+    failure = parse_log(log)
+
+    assert failure.failure_type == "http_api_failure"
+
+
+def test_connection_failure_classifies_as_database_failure_without_port_5432():
+    log = """
+2026-09-17 15:10:22 ERROR PaymentService - database connection failed
+Connection refused
+Port: 3306
+SQLException
+"""
+
+    failure = parse_log(log)
+
+    assert failure.failure_type == "database_connection"

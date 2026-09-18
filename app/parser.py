@@ -34,10 +34,16 @@ def parse_log(log: str) -> Failure:
     if re.search(r"Unresolved reference", log, re.IGNORECASE):
         evidence.append("Kotlin unresolved reference detected")
 
-    if "5432" in log:
-        failure_type = "database_connection"
-    elif status_code:
+    has_database_signal = re.search(
+        r"SQLException|ConnectException|Connection refused|database\s+connection",
+        log,
+        re.IGNORECASE,
+    )
+
+    if status_code:
         failure_type = "http_api_failure"
+    elif has_database_signal:
+        failure_type = "database_connection"
     elif re.search(r"Unresolved reference", log, re.IGNORECASE):
         failure_type = "build_failure"
     else:
