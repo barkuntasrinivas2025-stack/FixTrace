@@ -1,5 +1,5 @@
 from app.authorization import authorize
-from app.tools import ToolRequest
+from app.models import ToolRequest
 
 
 def test_authorized_agent_can_check_port():

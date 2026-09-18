@@ -1,5 +1,5 @@
-from app.models import DiagnosticResult
-from app.tools import ToolRequest, execute_tool
+from app.models import DiagnosticResult,ToolRequest
+from app.tools import execute_tool
 
 
 def test_authorized_request_executes_tool():
