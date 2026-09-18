@@ -4,13 +4,25 @@ from app.agent import explain_with_agent
 from app.parser import parse_log
 from app.report import build_report
 from app.rules import analyze_failure, classify_diagnostic
-from app.tools import check_port
-from app.models import Analysis
+from app.models import Analysis, DiagnosticResult, ToolRequest
+from app.tools import execute_tool
+
 
 def diagnose_port(host: str, port: int) -> Analysis:
-    result = check_port(host, port)
+    request = ToolRequest(
+        principal="fixtrace-agent",
+        action="check_port",
+        resource="diagnostic",
+    )
+
+    result = execute_tool(request, host, port)
+
+    if not isinstance(result, DiagnosticResult):
+        raise PermissionError(result)
+
     failure = classify_diagnostic(result)
     return analyze_failure(failure)
+
 
 def run(log_path: str) -> str:
     # 1. Read raw log

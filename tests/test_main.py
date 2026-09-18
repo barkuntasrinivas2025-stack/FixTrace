@@ -1,12 +1,33 @@
 from app.main import diagnose_port, run
 
 
+def test_diagnose_port_requires_authorization(monkeypatch):
+    def deny(_request):
+        return False
+
+    def should_not_execute(*args, **kwargs):
+        raise AssertionError(
+            "check_port must not execute when authorization is denied"
+        )
+
+    monkeypatch.setattr("app.authorization.authorize", deny)
+    monkeypatch.setattr("app.tools.check_port", should_not_execute)
+
+    try:
+        diagnose_port("localhost", 5432)
+        assert False, "diagnose_port should reject unauthorized tool execution"
+    except PermissionError as exc:
+        assert "DENIED" in str(exc)
+
+
 def test_diagnose_port_reachable():
     analysis = diagnose_port("localhost", 5432)
 
     assert analysis.classification == "database_connection_failure"
     assert analysis.confidence == "high"
     assert "configured database endpoint" in analysis.hypothesis.lower()
+
+
 def test_run_builds_complete_report(tmp_path, monkeypatch):
     log_file = tmp_path / "failure.log"
 
